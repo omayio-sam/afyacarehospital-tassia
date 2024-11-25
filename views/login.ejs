@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="login.css">
+    <title>login Page</title>
+</head>
+
+<body>
+    <div class="container">
+        <h1>AfyCare login</h1>
+        <form id="Form" action="/login" method="POST">
+            <input type="text" name="username" placeholder="Username" required>
+            <div class="error" id="usernameError"></div>
+            <input type="email" name="email" placeholder="Email" required>
+            <div class="error" id="emailError"></div>
+            <input type="password" name="password" placeholder="Password" required>
+            <div class="error" id="passwordError"></div>
+            <button type="submit">Login</button>
+        </form>
+        <p>Have an account? <a href="signup">sign up</a></p>
+        <p> Home page <a href="home">Back home</a></p>
+    </div>
+    <script>
+        const form = document.getElementById('Form');
+        const usernameError = document.getElementById('usernameError');
+        const emailError = document.getElementById('emailError');
+        const passwordError = document.getElementById('passwordError');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            passwordError.textContent = "";
+            emailError.textContent = "";
+            usernameError.textContent = "";
+
+            const username = form.username.value;
+            const email = form.email.value;
+            const password = form.password.value;
+
+            try {
+                const res = await fetch('/login', {
+                    method: 'POST',
+                    body: JSON.stringify({ username, email, password }),
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                });
+
+                if (!res.ok) {
+                    const data = await res.json();
+                    if (data.errs) {
+                        emailError.textContent = data.errs.email;
+                        passwordError.textContent = data.errs.password;
+                        usernameError.textContent = data.errs.username;
+                    }
+                } else {
+                    alert('welcome to new page');
+                }
+
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+    </script>
+</body>
+
+</html>
